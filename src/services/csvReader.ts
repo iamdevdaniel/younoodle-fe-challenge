@@ -1,5 +1,7 @@
-export const readFromCsv = async <T>(url: string, map: (values: string[]) => T): Promise<Array<T>> => {
-
+export const readFromCsv = async <T>(
+    url: string,
+    map: (values: string[]) => T,
+): Promise<Array<T>> => {
     try {
         const response = await fetch(url)
         const data = await response.text()
@@ -9,8 +11,7 @@ export const readFromCsv = async <T>(url: string, map: (values: string[]) => T):
             return map(values)
         })
         return contents
-    }
-    catch (error) {
+    } catch (error) {
         console.log('Error when reading from csv file: ', error)
         return []
     }
