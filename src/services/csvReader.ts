@@ -1,4 +1,4 @@
-export const csvReader = async (url: string): Promise<Array<[string, string]>> => {
+export const readFromCsv = async <T>(url: string, map: (values: string[]) => T): Promise<Array<T>> => {
 
     try {
         const response = await fetch(url)
@@ -6,7 +6,7 @@ export const csvReader = async (url: string): Promise<Array<[string, string]>> =
         const rows = data.split('\n')
         const contents = rows.map(row => {
             const values = row.split(',')
-            return [values[0], values[1]] as [string, string]
+            return map(values)
         })
         return contents
     }
