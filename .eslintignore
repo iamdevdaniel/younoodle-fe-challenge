@@ -7,3 +7,4 @@ package-lock.json
 README.md
 tsconfig.json
 webpack.config.js
+*.test.*

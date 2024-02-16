@@ -1,9 +1,11 @@
+export type Industry = 'bio' | 'internet' | 'environment'
+
 export type Investor = {
     name: string
-    industry: string
+    industry: Industry | 'any'
 }
 
 export type Startup = {
     name: string
-    industry: string
+    industry: Industry
 }
