@@ -1,7 +1,7 @@
 export const loadFromCsv = async <T>(
     url: string,
-    mapRow: (row: string[]) => [string, T],
-    storeInDb: (key: string, value: T) => Promise<void>,
+    mapRow: (row: string[]) => [string | undefined, T],
+    storeData: (value: T, key?: string) => Promise<void>,
 ): Promise<boolean> => {
     try {
         const response = await fetch(url)
@@ -11,7 +11,7 @@ export const loadFromCsv = async <T>(
         for (const row of rows) {
             const rawRow = row.split(',')
             const [key, values] = mapRow(rawRow)
-            await storeInDb(key, values)
+            await storeData(values, key)
         }
         return true
     } catch (error) {
