@@ -1,4 +1,4 @@
-import { openDB } from 'idb'
+import { openDB, IDBPDatabase, IDBPTransaction, IDBPObjectStore, IDBPCursorWithValue } from 'idb'
 
 const DB_DEFAULT_VERSION = 1
 
@@ -76,5 +76,29 @@ export const getValueFromDb = async (
             `Error getting value from ${databaseName}/${storeName}:`,
             error,
         )
+    }
+}
+
+export const iterateDbWithCursor = async<T>(
+    databaseName: string,
+    storeName: string,
+    callback: (value: T, cursor: IDBPCursorWithValue) => Promise<void>,
+    predicate: (value: T, cursor: IDBPCursorWithValue) => boolean
+) => {
+    try {
+        const db: IDBPDatabase = await openDB(databaseName, DB_DEFAULT_VERSION)
+        const tx: IDBPTransaction = db.transaction([storeName], 'readonly')
+        const store: IDBPObjectStore = tx.objectStore(storeName)
+        let cursor: IDBPCursorWithValue | null = await store.openCursor()
+
+        while (cursor && predicate(cursor.value, cursor)) {
+            await callback(cursor.value, cursor)
+            cursor = await cursor.continue()
+        }
+
+        db.close()
+    }
+    catch (error) {
+        console.error(`Error iterating cursor over ${databaseName}/${storeName}`, error)
     }
 }
