@@ -4,77 +4,76 @@ const DB_DEFAULT_VERSION = 1
 
 export const initializeDb = async (
     databaseName: string,
-    tableNames: Array<{
+    storeDefinitions: Array<{
         name: string
-        index?: string
-        keyPath?: string
+        options?: IDBObjectStoreParameters & { index?: string }
     }>,
-): Promise<void> => {
+): Promise<boolean> => {
     try {
         await openDB(databaseName, DB_DEFAULT_VERSION, {
             upgrade(db) {
-                for (const tableName of tableNames) {
-                    if (!db.objectStoreNames.contains(tableName.name)) {
-                        const options: IDBObjectStoreParameters =
-                            tableName.keyPath
-                                ? { keyPath: tableName.keyPath }
-                                : { autoIncrement: true }
+                for (const definition of storeDefinitions) {
+                    if (!db.objectStoreNames.contains(definition.name)) {
                         const store = db.createObjectStore(
-                            tableName.name,
-                            options,
+                            definition.name,
+                            definition.options,
                         )
-                        if (tableName.index) {
+
+                        if (definition.options?.index) {
                             store.createIndex(
-                                tableName.index,
-                                tableName.index,
-                                { unique: true },
+                                definition.options.index,
+                                definition.options.index,
                             )
                         }
                     }
                 }
             },
         })
+        return true
     } catch (error) {
         console.error(`Error initializing database ${databaseName}:`, error)
+        return false
     }
 }
 
 export const storeInDb = async <T>(
     databaseName: string,
-    tableName: string,
+    definition: string,
     values: T,
     key?: string,
-): Promise<void> => {
+): Promise<boolean> => {
     try {
         const db = await openDB(databaseName, DB_DEFAULT_VERSION)
-        const tx = db.transaction(tableName, 'readwrite')
-        const store = tx.objectStore(tableName)
+        const tx = db.transaction(definition, 'readwrite')
+        const store = tx.objectStore(definition)
 
         await store.put(values, key)
         await tx.done
         db.close()
+        return true
     } catch (error) {
         console.error(
-            `Error storing data in ${databaseName}/${tableName}:`,
+            `Error storing data in ${databaseName}/${definition}:`,
             error,
         )
+        return false
     }
 }
 
 export const getValueFromDb = async (
-    key: string,
-    tableName: string,
     databaseName: string,
+    storeName: string,
+    key: string,
 ) => {
     try {
         const db = await openDB(databaseName, DB_DEFAULT_VERSION)
-        const value = await db.get(tableName, key)
+        const value = await db.get(storeName, key)
 
         db.close()
         return value
     } catch (error) {
         console.error(
-            `Error getting value from ${databaseName}/${tableName}:`,
+            `Error getting value from ${databaseName}/${storeName}:`,
             error,
         )
     }
