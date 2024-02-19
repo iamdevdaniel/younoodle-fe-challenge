@@ -9,3 +9,7 @@ export type Startup = {
     name: string
     industry: Industry
 }
+
+export type MatchedStartup = Startup & {
+    investorId: number
+}
