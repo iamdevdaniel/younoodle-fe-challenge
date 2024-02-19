@@ -7,13 +7,15 @@ import {
 } from '../dataAccess/idbManager'
 import { Investor, Startup, OperationFlag } from '../types'
 
-export const initializeApp = async () => {
+export const initializeStores = async () => {
     await initializeDb(CONSTS.DATABASE_NAME, [
         { name: CONSTS.INVESTORS_STORE_NAME, options: { autoIncrement: true } },
         { name: CONSTS.STARTUPS_STORE_NAME, options: { autoIncrement: true } },
         { name: CONSTS.FLAGS_STORE_NAME, options: { keyPath: 'name' } },
     ])
+}
 
+export const loadCsvFilesToDb = async () => {
     await loadCsvToStore<Investor>(
         CONSTS.INVESTORS_CSV_URL,
         CONSTS.DATABASE_NAME,
