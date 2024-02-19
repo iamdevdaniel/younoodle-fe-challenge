@@ -66,6 +66,32 @@ export const storeInDb = async <T>(
     }
 }
 
+export const storeInDbBulk = async <T>(
+    databaseName: string,
+    storeName: string,
+    entries: Map<IDBValidKey, T>,
+): Promise<boolean> => {
+    try {
+        const db = await openDB(databaseName, DB_DEFAULT_VERSION)
+        const tx = db.transaction(storeName, 'readwrite')
+        const store = tx.objectStore(storeName)
+
+        for (const [key, value] of entries) {
+            await store.put(value, key)
+        }
+
+        await tx.done
+        db.close()
+        return true
+    } catch (error) {
+        console.error(
+            `Error storing data in bulk in ${databaseName}/${storeName}:`,
+            error,
+        )
+        return false
+    }
+}
+
 export const getValueFromDb = async (
     databaseName: string,
     storeName: string,

@@ -7,7 +7,7 @@ export type Investor = {
 }
 
 export type InvestorRecord = {
-    key: number
+    key: IDBValidKey
     value: Investor
 }
 
@@ -16,7 +16,22 @@ export type Startup = {
     industry: Industry
 }
 
+export type StartupRecord = {
+    key: IDBValidKey
+    value: Startup
+}
+
 export type MatchedStartup = Startup & {
-    investorId: number
+    investorId: IDBValidKey
     status: MatchedStatus
+}
+
+export type MatchedStartupRecord = {
+    key: IDBValidKey
+    value: MatchedStartup
+}
+
+export type OperationFlag = {
+    name: string
+    status: 'loaded' | 'done'
 }

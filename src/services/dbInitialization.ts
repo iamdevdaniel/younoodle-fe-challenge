@@ -1,48 +1,37 @@
+import CONSTS from '../constants'
 import { loadFromCsv } from '../dataAccess/csvLoader'
 import {
     initializeDb,
     storeInDb,
     getValueFromDb,
 } from '../dataAccess/idbManager'
-import { Investor, Startup } from '../types'
-
-const DATABASE_NAME = 'matcher-db'
-const INVESTORS_STORE_NAME = 'investors'
-const STARTUPS_STORE_NAME = 'startups'
-const FLAGS_STORE_NAME = 'flags'
-const INVESTORS_CSV_URL = '/data/investors.csv'
-const STARTUPS_CSV_URL = '/data/startups.csv'
-
-type LoadedFlag = {
-    name: string
-    status: 'loaded' | 'deleted'
-}
+import { Investor, Startup, OperationFlag } from '../types'
 
 export const initializeApp = async () => {
-    await initializeDb(DATABASE_NAME, [
-        { name: INVESTORS_STORE_NAME, options: { autoIncrement: true } },
-        { name: STARTUPS_STORE_NAME, options: { autoIncrement: true } },
-        { name: FLAGS_STORE_NAME, options: { keyPath: 'name' } },
+    await initializeDb(CONSTS.DATABASE_NAME, [
+        { name: CONSTS.INVESTORS_STORE_NAME, options: { autoIncrement: true } },
+        { name: CONSTS.STARTUPS_STORE_NAME, options: { autoIncrement: true } },
+        { name: CONSTS.FLAGS_STORE_NAME, options: { keyPath: 'name' } },
     ])
 
     await loadCsvToStore<Investor>(
-        INVESTORS_CSV_URL,
-        DATABASE_NAME,
-        INVESTORS_STORE_NAME,
+        CONSTS.INVESTORS_CSV_URL,
+        CONSTS.DATABASE_NAME,
+        CONSTS.INVESTORS_STORE_NAME,
     )
 
     await loadCsvToStore<Startup>(
-        STARTUPS_CSV_URL,
-        DATABASE_NAME,
-        STARTUPS_STORE_NAME,
+        CONSTS.STARTUPS_CSV_URL,
+        CONSTS.DATABASE_NAME,
+        CONSTS.STARTUPS_STORE_NAME,
     )
 }
 
 const setLoadedFlag = async (
     dbName: string,
     storeName: string,
-    values: LoadedFlag,
-): Promise<boolean> => storeInDb<LoadedFlag>(dbName, storeName, values)
+    value: OperationFlag,
+): Promise<boolean> => await storeInDb<OperationFlag>(dbName, storeName, value)
 
 const checkIfLoaded = async (
     dbName: string,
@@ -60,7 +49,7 @@ const loadCsvToStore = async <T>(
 ) => {
     const isCsvAlreadyLoaded = await checkIfLoaded(
         dbName,
-        FLAGS_STORE_NAME,
+        CONSTS.FLAGS_STORE_NAME,
         csvUrl,
     )
 
@@ -77,7 +66,7 @@ const loadCsvToStore = async <T>(
         const loadIsSuccessful = await loadFromCsv<T>(csvUrl, mapRow, storeData)
 
         if (loadIsSuccessful) {
-            await setLoadedFlag(dbName, FLAGS_STORE_NAME, {
+            await setLoadedFlag(dbName, CONSTS.FLAGS_STORE_NAME, {
                 name: csvUrl,
                 status: 'loaded',
             })
