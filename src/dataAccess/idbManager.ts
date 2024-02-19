@@ -88,7 +88,7 @@ export const getValueFromDb = async (
 export const iterateDbWithCursor = async (
     databaseName: string,
     storeName: string,
-    callback: (cursor: IDBPCursorWithValue, db: IDBPDatabase) => Promise<void>,
+    callback: (cursor: IDBPCursorWithValue) => Promise<void>,
     predicate?: (cursor: IDBPCursorWithValue) => boolean,
 ) => {
     try {
@@ -98,7 +98,7 @@ export const iterateDbWithCursor = async (
         let cursor: IDBPCursorWithValue | null = await store.openCursor()
 
         while (cursor && (predicate !== undefined ? predicate(cursor) : true)) {
-            await callback(cursor, db)
+            await callback(cursor)
             cursor = await cursor.continue()
         }
 

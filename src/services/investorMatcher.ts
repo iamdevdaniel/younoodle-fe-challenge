@@ -1,20 +1,18 @@
-import { IDBPCursorWithValue, IDBPTransaction, IDBPDatabase } from 'idb'
+import { IDBPCursorWithValue } from 'idb'
 
 import { iterateDbWithCursor } from '../dataAccess/idbManager'
-import { Investor, MatchedStartup, Startup } from '../types'
+import { Investor, InvestorRecord, MatchedStartup, Startup } from '../types'
 
 const MAX_STARTUP_COUNT = 10
 
-export const matchStartupsWithInvestors = async () => {
-    const specificIndustryInvestors: Array<{ key: number; value: Investor }> =
-        []
-    const anyIndustryInvestors: Array<{ key: number; value: Investor }> = []
-    const startupUpdates: Map<IDBValidKey, MatchedStartup> = new Map()
+const classifyInvestors = async () => {
+    const specificIndustryInvestors: Array<InvestorRecord> = []
+    const anyIndustryInvestors: Array<InvestorRecord> = []
 
     await iterateDbWithCursor(
         'matcher-db',
         'investors',
-        async (investorCursor: IDBPCursorWithValue, _: IDBPDatabase) => {
+        async (investorCursor: IDBPCursorWithValue) => {
             const investor = {
                 key: investorCursor.key as number,
                 value: investorCursor.value,
@@ -27,49 +25,56 @@ export const matchStartupsWithInvestors = async () => {
         },
     )
 
+    return [specificIndustryInvestors, anyIndustryInvestors]
+}
+
+const matchStartups = async (
+    investor: { key: number; value: Investor },
+    matchedStartups: Map<IDBValidKey, MatchedStartup>,
+) => {
+    let startupCount = 0
+
+    await iterateDbWithCursor(
+        'matcher-db',
+        'startups',
+        async (startupCursor: IDBPCursorWithValue) => {
+            if (startupCount >= MAX_STARTUP_COUNT) {
+                return
+            }
+
+            const {
+                key,
+                value,
+            }: { key: IDBValidKey; value: Startup | MatchedStartup } =
+                startupCursor
+            const isSameIndustry = investor.value.industry === value.industry
+            const isInvestorAnyIndustry = investor.value.industry === 'any'
+            const matchesIndustry = isSameIndustry || isInvestorAnyIndustry
+            const isStartupMatched = matchedStartups.has(key)
+
+            if (matchesIndustry && !isStartupMatched) {
+                const matchedStartup: MatchedStartup = {
+                    ...value,
+                    status: 'matched',
+                    investorId: investor.key,
+                }
+                matchedStartups.set(key, matchedStartup)
+                startupCount++
+            }
+        },
+    )
+}
+
+export const matchStartupsWithInvestors = async () => {
+    const matchedStartups: Map<IDBValidKey, MatchedStartup> = new Map()
+
+    const [specificIndustryInvestors, anyIndustryInvestors] =
+        await classifyInvestors()
     const allInvestors = [...specificIndustryInvestors, ...anyIndustryInvestors]
 
     for (const investor of allInvestors) {
-        let startupCount = 0
-
-        await iterateDbWithCursor(
-            'matcher-db',
-            'startups',
-            async (startupCursor: IDBPCursorWithValue, db: IDBPDatabase) => {
-                if (startupCount >= MAX_STARTUP_COUNT) {
-                    return
-                }
-
-                const {
-                    key,
-                    value,
-                }: { key: IDBValidKey; value: Startup | MatchedStartup } =
-                    startupCursor
-                const isSameIndustry =
-                    investor.value.industry === value.industry
-                const isInvestorAnyIndustry = investor.value.industry === 'any'
-                const matchesIndustry = isSameIndustry || isInvestorAnyIndustry
-                const isStartupMatched = startupUpdates.has(key)
-
-                if (matchesIndustry && !isStartupMatched) {
-                    const matchedStartup: MatchedStartup = {
-                        ...value,
-                        investorId: investor.key,
-                    }
-                    startupUpdates.set(key, matchedStartup)
-                    startupCount++
-                }
-            },
-            (_: IDBPCursorWithValue) => {
-                if (startupCount < MAX_STARTUP_COUNT) {
-                    return true
-                } else {
-                    startupCount = 0
-                    return false
-                }
-            },
-        )
+        await matchStartups(investor, matchedStartups)
     }
 
-    console.log(startupUpdates)
+    console.log(matchedStartups)
 }
