@@ -1,6 +1,7 @@
 import React from 'react'
 
 import InvestorCard from '../components/InvestorCard'
+import useInfiniteScroll from '../hooks/useInfiniteScroll'
 import { getMatchedStartupsForInvestors } from '../services/pagination'
 import {
     MatchedStartupRecord,
@@ -21,13 +22,15 @@ export const MatchedStartups: React.FC = () => {
             startId,
             ITEMS_PER_SCROLL,
         )
-        setMatches(prevMatches => [...prevMatches, ...result])
         if (result.length > 0) {
             const lastItem = result[result.length - 1]
             const nextStartId = (lastItem.investor.key as number) + 1
             setStartId(nextStartId)
         }
+        setMatches(prevMatches => [...prevMatches, ...result])
     }
+
+    const lastInvestorElementRef = useInfiniteScroll(fetchData, startId)
 
     React.useEffect(() => {
         fetchData()
@@ -35,30 +38,30 @@ export const MatchedStartups: React.FC = () => {
 
     return (
         <section id="matched-startups-view">
-            <header id="matched-startups-view-header">
-                <h1>Matched Startups</h1>
-            </header>
-            <div id="investor-card-list">
-                {matches.length ? (
-                    matches.map((match, index) => {
-                        const { investor, startups } = match
-                        return (
+            <ul id="investor-card-list">
+                {matches.map((item, index) => {
+                    const match: {
+                        investor: InvestorRecord,
+                        startups: Array<MatchedStartupRecord>,
+                    } = item;
+                    const { investor, startups } = match
+                    const isLastElement = index === matches.length - 1
+
+                    return (
+                        <li
+                            ref={isLastElement ? lastInvestorElementRef : null}
+                            key={index}
+                        >
                             <InvestorCard
-                                key={index}
-                                investor={investor as InvestorRecord}
-                                startups={
-                                    startups as Array<MatchedStartupRecord>
-                                }
+                                investor={investor}
+                                startups={startups}
                             />
-                        )
-                    })
-                ) : (
-                    <React.Fragment />
-                )}
-            </div>
+                        </li>
+                    )
+                })}
+            </ul>
             <button
                 name="add-matched-investor"
-                onClick={fetchData}
                 aria-label="Add new investor"
             >
                 +

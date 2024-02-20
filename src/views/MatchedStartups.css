@@ -39,6 +39,7 @@
     grid-gap: var(--card-list-gap);
     padding: var(--card-list-padding);
     background-color: #f4f4f4;
+    list-style: none;
 }
 
 #matched-startups-view button[name='add-matched-investor'] {
