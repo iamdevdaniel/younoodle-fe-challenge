@@ -9,17 +9,26 @@ import {
 } from '../types'
 import './MatchedStartups.css'
 
+const ITEMS_PER_SCROLL = 12
+
 export const MatchedStartups: React.FC = () => {
-    const [matches, setMatches] = React.useState<Array<InvestorWithStartups>>(
-        [],
-    )
+    const [matches, setMatches] = React.useState<InvestorWithStartups[]>([])
+    const [startId, setStartId] = React.useState(1)
+
+    const fetchData = async () => {
+        const result = await getMatchedStartupsForInvestors(
+            startId,
+            ITEMS_PER_SCROLL,
+        )
+        setMatches(prevMatches => [...prevMatches, ...result])
+        if (result.length > 0) {
+            const lastItem = result[result.length - 1]
+            const nextStartId = (lastItem.investor.key as number) + 1
+            setStartId(nextStartId)
+        }
+    }
 
     React.useEffect(() => {
-        const fetchData = async () => {
-            const result = await getMatchedStartupsForInvestors()
-            setMatches(result)
-        }
-
         fetchData()
     }, [])
 
@@ -32,7 +41,6 @@ export const MatchedStartups: React.FC = () => {
                 {matches.length ? (
                     matches.map((match, index) => {
                         const { investor, startups } = match
-
                         return (
                             <InvestorCard
                                 key={index}
@@ -48,7 +56,9 @@ export const MatchedStartups: React.FC = () => {
                     <React.Fragment />
                 )}
             </div>
-            <button name="add-matched-investor">+</button>
+            <button name="add-matched-investor" onClick={fetchData}>
+                +
+            </button>
         </section>
     )
 }

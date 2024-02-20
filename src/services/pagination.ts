@@ -6,22 +6,30 @@ import {
     MatchedStartupRecord,
 } from '../types'
 
-export const getMatchedStartupsForInvestors = async () => {
-    const ITEMS_PER_SCROLL = 100
+export const getMatchedStartupsForInvestors = async (
+    startId: number,
+    limit: number,
+) => {
     const selectedInvestors: Array<InvestorRecord> = []
     const investorsWithStartups: Array<InvestorWithStartups> = []
+    let startFound = false
 
     await iterateDbWithCursor(
         CONSTS.DATABASE_NAME,
         CONSTS.INVESTORS_STORE_NAME,
         async cursor => {
-            const investorRecord: InvestorRecord = {
-                key: cursor.key,
-                value: cursor.value,
+            if ((cursor.key as number) === startId) {
+                startFound = true
             }
-            selectedInvestors.push(investorRecord)
+            if (startFound) {
+                const investorRecord: InvestorRecord = {
+                    key: cursor.key,
+                    value: cursor.value,
+                }
+                selectedInvestors.push(investorRecord)
+            }
         },
-        _ => selectedInvestors.length < ITEMS_PER_SCROLL,
+        _ => selectedInvestors.length < limit,
     )
 
     for (const investor of selectedInvestors) {
@@ -40,7 +48,7 @@ export const getMatchedStartupsForInvestors = async () => {
                 }
             },
             _ => {
-                if (startupCount < ITEMS_PER_SCROLL) {
+                if (startupCount < limit) {
                     return true
                 } else {
                     startupCount = 0
