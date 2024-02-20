@@ -24,6 +24,9 @@ const InvestorCard: React.FC<InvestorCardProps> = ({
     }
 
     const { name, industry } = investor
+    const logClickedIds = (investorId: number, startupId: number) => {
+        console.log(investorId, startupId)
+    }
 
     return (
         <section className="investor-card" aria-label={`Investor ${name}`}>
@@ -44,6 +47,8 @@ const InvestorCard: React.FC<InvestorCardProps> = ({
                             key={startupId as number}
                             startup={value}
                             startupId={startupId}
+                            onAdd={logClickedIds}
+                            onRemove={logClickedIds}
                         />
                     )
                 })}

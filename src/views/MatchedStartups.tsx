@@ -38,6 +38,9 @@ export const MatchedStartups: React.FC = () => {
 
     return (
         <section id="matched-startups-view">
+            <header id="matched-startups-view-header">
+                <h1>Matched Startups</h1>
+            </header>
             <ul id="investor-card-list">
                 {matches.map((item, index) => {
                     const match: {
