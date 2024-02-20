@@ -10,6 +10,16 @@
     --card-list-large-columns: repeat(3, 1fr);
     --card-list-medium-columns: repeat(2, 1fr);
     --card-list-small-columns: 1fr;
+    --button-position: fixed;
+    --button-right-bottom: 20px;
+    --button-width-height: 50px;
+    --button-border-radius: 50%;
+    --button-bg-color: #007BFF;
+    --button-font-color: white;
+    --button-hover-bg-color: #0056b3;
+    --button-small-width: 100%;
+    --button-small-border-radius: 0;
+    position: relative;
 }
 
 #matched-startups-view-header {
@@ -28,6 +38,34 @@
     display: var(--card-list-display);
     grid-gap: var(--card-list-gap);
     padding: var(--card-list-padding);
+}
+
+#matched-startups-view button[name='add-matched-investor'] {
+    position: var(--button-position);
+    right: var(--button-right-bottom);
+    bottom: var(--button-right-bottom);
+    width: var(--button-width-height);
+    height: var(--button-width-height);
+    border-radius: var(--button-border-radius);
+    background-color: var(--button-bg-color);
+    color: var(--button-font-color);
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#matched-startups-view button[name='add-matched-investor']:hover {
+    background-color: var(--button-hover-bg-color);
+}
+
+@media only screen and (max-width: 899px) {
+    #matched-startups-view button[name='add-matched-investor'] {
+        width: var(--button-small-width);
+        border-radius: var(--button-small-border-radius);
+        bottom: 0;
+        right: 0;
+    }
 }
 
 @media only screen and (min-width: 1620px) {

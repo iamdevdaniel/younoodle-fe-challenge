@@ -29,5 +29,6 @@ export const MatchedStartups: React.FC = () => (
                 <React.Fragment />
             )}
         </div>
+        <button name="add-matched-investor">+</button>
     </section>
 )
