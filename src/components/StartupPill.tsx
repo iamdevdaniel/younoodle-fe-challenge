@@ -7,21 +7,21 @@ import './StartupPill.css'
 type StartupPillProps = {
     startupId: IDBValidKey
     startup: MatchedStartup
+    onAdd: (investorId: number, startupId: number) => {}
+    onRemove: (investorId: number, startupId: number) => {}
 }
 
 const StartupPill: React.FC<StartupPillProps> = ({
     startupId,
     startup: { name, industry, investorId, status },
+    onAdd,
+    onRemove,
 }) => {
     const industryColors = {
         bio: theme['green-1'],
         internet: theme['blue-1'],
         environment: theme['teal-1'],
     }
-
-    const handleUnmatch = () => {}
-
-    const handleMatch = () => {}
 
     const statusClass = status === 'matched' ? 'matched' : 'removed'
     const industryColor =
@@ -33,7 +33,7 @@ const StartupPill: React.FC<StartupPillProps> = ({
             <span>{name}</span>
             {status === 'matched' && (
                 <button
-                    onClick={handleUnmatch}
+                    onClick={() => onRemove(investorId as number, startupId as number)}
                     className="remove-button"
                     aria-label="Remove"
                 >
@@ -42,7 +42,7 @@ const StartupPill: React.FC<StartupPillProps> = ({
             )}
             {status === 'removed' && (
                 <span
-                    onClick={handleMatch}
+                    onClick={() => onAdd(investorId as number, startupId as number)}
                     className="add-button"
                     aria-label="Add"
                 >
