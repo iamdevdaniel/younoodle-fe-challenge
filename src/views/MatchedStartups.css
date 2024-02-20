@@ -1,0 +1,49 @@
+#matched-startups-view {
+    --header-padding: 20px;
+    --header-bg-color: #f5f5f5;
+    --header-border-color: #ddd;
+    --header-font-size: 24px;
+    --header-font-color: #333;
+    --card-list-display: grid;
+    --card-list-gap: 20px;
+    --card-list-padding: 20px;
+    --card-list-large-columns: repeat(3, 1fr);
+    --card-list-medium-columns: repeat(2, 1fr);
+    --card-list-small-columns: 1fr;
+}
+
+#matched-startups-view-header {
+    padding: var(--header-padding);
+    background-color: var(--header-bg-color);
+    border-bottom: 1px solid var(--header-border-color);
+}
+
+#matched-startups-view-header h1 {
+    margin: 0;
+    font-size: var(--header-font-size);
+    color: var(--header-font-color);
+}
+
+#investor-card-list {
+    display: var(--card-list-display);
+    grid-gap: var(--card-list-gap);
+    padding: var(--card-list-padding);
+}
+
+@media only screen and (min-width: 1620px) {
+    #investor-card-list {
+        grid-template-columns: var(--card-list-large-columns);
+    }
+}
+
+@media only screen and (max-width: 1619px) and (min-width: 900px) {
+    #investor-card-list {
+        grid-template-columns: var(--card-list-medium-columns);
+    }
+}
+
+@media only screen and (max-width: 899px) {
+    #investor-card-list {
+        grid-template-columns: var(--card-list-small-columns);
+    }
+}

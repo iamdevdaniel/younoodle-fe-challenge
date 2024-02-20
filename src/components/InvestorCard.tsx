@@ -27,17 +27,17 @@ const InvestorCard: React.FC<InvestorCardProps> = ({
     const { name, industry } = investor
 
     return (
-        <div className="investor-card">
+        <section className="investor-card" aria-label={`Investor ${name}`}>
             <div
                 id="header-line"
                 style={{ backgroundColor: industryColors[industry] }}
             />
-            <div id="header">
+            <header id="header">
                 <h4>{`# ${investorId as number}`}</h4>
                 <h5>{name}</h5>
                 <IndustryIcon industry={industry} />
-            </div>
-            <div id="body">
+            </header>
+            <main id="body">
                 {startups.map(startup => {
                     const { key: startupId, value } = startup
                     return (
@@ -48,8 +48,8 @@ const InvestorCard: React.FC<InvestorCardProps> = ({
                         />
                     )
                 })}
-            </div>
-        </div>
+            </main>
+        </section>
     )
 }
 

@@ -8,14 +8,12 @@
     --investor-card-body-margin: 0 24px 8px 24px;
     --investor-card-grid-row-gap: 16px;
     --investor-card-grid-column-gap: 16px;
-    --investor-card-width: 650px;
 
     border: 1px solid var(--investor-card-border-color);
     border-radius: var(--investor-card-border-radius);
     box-shadow: var(--investor-card-box-shadow);
     padding: 0 var(--investor-card-padding) var(--investor-card-padding);
     background-color: var(--investor-card-background-color);
-    width: var(--investor-card-width);
     container-name: card-container;
     container-type: inline-size;
     position: relative;
@@ -47,7 +45,7 @@
     justify-items: center;
 }
 
-@container card-container (min-width: 640px) {
+@container card-container (min-width: 540px) {
     .investor-card #body {
         grid-template-columns: repeat(3, 1fr);
     }
