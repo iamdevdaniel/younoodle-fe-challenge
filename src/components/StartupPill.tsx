@@ -7,8 +7,8 @@ import './StartupPill.css'
 type StartupPillProps = {
     startupId: IDBValidKey
     startup: MatchedStartup
-    onAdd: (investorId: number, startupId: number) => {}
-    onRemove: (investorId: number, startupId: number) => {}
+    onAdd: (investorId: number, startupId: number) => void
+    onRemove: (investorId: number, startupId: number) => void
 }
 
 const StartupPill: React.FC<StartupPillProps> = ({
@@ -33,7 +33,9 @@ const StartupPill: React.FC<StartupPillProps> = ({
             <span>{name}</span>
             {status === 'matched' && (
                 <button
-                    onClick={() => onRemove(investorId as number, startupId as number)}
+                    onClick={() =>
+                        onRemove(investorId as number, startupId as number)
+                    }
                     className="remove-button"
                     aria-label="Remove"
                 >
@@ -42,7 +44,9 @@ const StartupPill: React.FC<StartupPillProps> = ({
             )}
             {status === 'removed' && (
                 <span
-                    onClick={() => onAdd(investorId as number, startupId as number)}
+                    onClick={() =>
+                        onAdd(investorId as number, startupId as number)
+                    }
                     className="add-button"
                     aria-label="Add"
                 >

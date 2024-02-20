@@ -41,9 +41,9 @@ export const MatchedStartups: React.FC = () => {
             <ul id="investor-card-list">
                 {matches.map((item, index) => {
                     const match: {
-                        investor: InvestorRecord,
-                        startups: Array<MatchedStartupRecord>,
-                    } = item;
+                        investor: InvestorRecord
+                        startups: Array<MatchedStartupRecord>
+                    } = item
                     const { investor, startups } = match
                     const isLastElement = index === matches.length - 1
 
@@ -60,10 +60,7 @@ export const MatchedStartups: React.FC = () => {
                     )
                 })}
             </ul>
-            <button
-                name="add-matched-investor"
-                aria-label="Add new investor"
-            >
+            <button name="add-matched-investor" aria-label="Add new investor">
                 +
             </button>
         </section>
