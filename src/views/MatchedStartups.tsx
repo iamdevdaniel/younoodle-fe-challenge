@@ -10,10 +10,11 @@ import {
 import './MatchedStartups.css'
 
 const ITEMS_PER_SCROLL = 12
+const STARTING_ID = 1
 
 export const MatchedStartups: React.FC = () => {
     const [matches, setMatches] = React.useState<InvestorWithStartups[]>([])
-    const [startId, setStartId] = React.useState(1)
+    const [startId, setStartId] = React.useState(STARTING_ID)
 
     const fetchData = async () => {
         const result = await getMatchedStartupsForInvestors(
@@ -48,7 +49,6 @@ export const MatchedStartups: React.FC = () => {
                                 startups={
                                     startups as Array<MatchedStartupRecord>
                                 }
-                                overlay={false}
                             />
                         )
                     })
@@ -56,7 +56,11 @@ export const MatchedStartups: React.FC = () => {
                     <React.Fragment />
                 )}
             </div>
-            <button name="add-matched-investor" onClick={fetchData}>
+            <button
+                name="add-matched-investor"
+                onClick={fetchData}
+                aria-label="Add new investor"
+            >
                 +
             </button>
         </section>

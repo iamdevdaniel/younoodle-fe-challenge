@@ -10,7 +10,6 @@ import './InvestorCard.css'
 type InvestorCardProps = {
     investor: InvestorRecord
     startups: Array<MatchedStartupRecord>
-    overlay: boolean
 }
 
 const InvestorCard: React.FC<InvestorCardProps> = ({
