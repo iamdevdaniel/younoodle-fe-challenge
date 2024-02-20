@@ -33,8 +33,12 @@ export const MatchedStartups: React.FC = () => {
     const lastInvestorElementRef = useInfiniteScroll(fetchData, startId)
 
     React.useEffect(() => {
-        fetchData()
-    }, [])
+        const timer = setTimeout(() => {
+            fetchData();
+        }, 1000);
+
+        return () => clearTimeout(timer);
+    }, []);
 
     return (
         <section id="matched-startups-view">

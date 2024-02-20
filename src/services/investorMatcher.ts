@@ -85,37 +85,47 @@ const setMatchedFlag = async (
     value: OperationFlag,
 ): Promise<boolean> => await storeInDb<OperationFlag>(dbName, storeName, value)
 
-export const matchStartupsWithInvestors = async () => {
-    if (
-        !(await checkIfMatchedAlready(
+const classifyAndMatchStartupsWithInvestors = async () => {
+    const matchedStartups: Map<IDBValidKey, MatchedStartup> = new Map()
+    const [specificIndustryInvestors, anyIndustryInvestors] =
+        await classifyInvestors()
+    const allInvestors = [
+        ...specificIndustryInvestors,
+        ...anyIndustryInvestors,
+    ]
+
+    for (const investor of allInvestors) {
+        await matchStartups(investor, matchedStartups)
+    }
+
+    const isSuccessful = await storeInDbBulk(
+        CONSTS.DATABASE_NAME,
+        CONSTS.STARTUPS_STORE_NAME,
+        matchedStartups,
+    )
+    if (isSuccessful) {
+        await setMatchedFlag(
             CONSTS.DATABASE_NAME,
             CONSTS.FLAGS_STORE_NAME,
-            'matchStartupsWithInvestors',
-        ))
-    ) {
-        const matchedStartups: Map<IDBValidKey, MatchedStartup> = new Map()
-        const [specificIndustryInvestors, anyIndustryInvestors] =
-            await classifyInvestors()
-        const allInvestors = [
-            ...specificIndustryInvestors,
-            ...anyIndustryInvestors,
-        ]
-
-        for (const investor of allInvestors) {
-            await matchStartups(investor, matchedStartups)
-        }
-
-        const isSuccessful = await storeInDbBulk(
-            CONSTS.DATABASE_NAME,
-            CONSTS.STARTUPS_STORE_NAME,
-            matchedStartups,
+            { name: 'matchStartupsWithInvestors', status: 'done' },
         )
-        if (isSuccessful) {
-            await setMatchedFlag(
-                CONSTS.DATABASE_NAME,
-                CONSTS.FLAGS_STORE_NAME,
-                { name: 'matchStartupsWithInvestors', status: 'done' },
-            )
-        }
+    }
+}
+
+export const matchStartupsWithInvestors = async () => {
+    const alreadyMatched = (await checkIfMatchedAlready(
+        CONSTS.DATABASE_NAME,
+        CONSTS.FLAGS_STORE_NAME,
+        'matchStartupsWithInvestors',
+    ))
+
+    console.log(alreadyMatched)
+
+    if (!alreadyMatched) {
+
+        setTimeout(() => {
+            classifyAndMatchStartupsWithInvestors()
+        }, 3000)
+
     }
 }
