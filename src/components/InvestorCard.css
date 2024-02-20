@@ -1,0 +1,67 @@
+.investor-card {
+    --investor-card-border-color: #ddd;
+    --investor-card-border-radius: 8px;
+    --investor-card-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --investor-card-padding: 16px;
+    --investor-card-background-color: #fff;
+    --investor-card-header-margin: 8px 24px 16px 24px;
+    --investor-card-body-margin: 0 24px 8px 24px;
+    --investor-card-grid-row-gap: 16px;
+    --investor-card-grid-column-gap: 16px;
+    --investor-card-width: 650px;
+
+    border: 1px solid var(--investor-card-border-color);
+    border-radius: var(--investor-card-border-radius);
+    box-shadow: var(--investor-card-box-shadow);
+    padding: 0 var(--investor-card-padding) var(--investor-card-padding);
+    background-color: var(--investor-card-background-color);
+    width: var(--investor-card-width);
+    container-name: card-container;
+    container-type: inline-size;
+    position: relative;
+    overflow: hidden;
+}
+
+.investor-card #header-line {
+    height: 4px;
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+.investor-card #header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin: var(--investor-card-header-margin);
+}
+
+.investor-card #body {
+    margin: var(--investor-card-body-margin);
+    display: grid;
+    row-gap: var(--investor-card-grid-row-gap);
+    column-gap: var(--investor-card-grid-column-gap);
+    grid-template-columns: repeat(1, 1fr);
+    align-items: center;
+    justify-items: center;
+}
+
+@container card-container (min-width: 640px) {
+    .investor-card #body {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@container card-container (min-width: 440px) and (max-width: 639px) {
+    .investor-card #body {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@container card-container (max-width: 439px) {
+    .investor-card #body {
+        grid-template-columns: repeat(1, 1fr);
+        --investor-card-grid-row-gap: 8px;
+    }
+}

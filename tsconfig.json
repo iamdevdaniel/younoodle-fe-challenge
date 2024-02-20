@@ -21,7 +21,8 @@
     "jsx": "react"
   },
   "include": [
-    "src"
+    "src",
+    "customTypes.d.ts"
   ],
   "exclude": [
     "**/*.test.ts",

@@ -1,0 +1,56 @@
+.pill {
+    --pill-padding: 4px;
+    --pill-border-radius: 20px;
+    --pill-height: 24px;
+    --pill-font-size: 14px;
+    --pill-font-weight: bold;
+    --pill-color: #333333;
+    --pill-background-color: #ffffff;
+    --pill-border-width: 2px;
+
+    display: inline-flex;
+    align-items: center;
+    padding: var(--pill-padding);
+    border-radius: var(--pill-border-radius);
+    height: var(--pill-height);
+    font-size: var(--pill-font-size);
+    font-weight: var(--pill-font-weight);
+    color: var(--pill-color);
+    background-color: var(--pill-background-color);
+    border: var(--pill-border-width) solid;
+    width: 160px;
+}
+
+.pill span {
+    font-size: 12px;
+    margin-left: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+    white-space: nowrap;
+}
+
+.remove-button {
+    aspect-ratio: 1;
+    height: var(--pill-height);
+    border-radius: calc(var(--pill-height) / 2);
+    line-height: 12px;
+    text-align: center;
+    margin-left: 8px;
+    padding: var(--pill-padding) calc(var(--pill-padding) * 2);
+    border: none;
+    background-color: #dadada;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background-color 175ms ease;
+    flex-shrink: 0;
+}
+
+.remove-button:hover {
+    background-color: #e66161;
+}
+
+.add-button {
+    margin-left: 8px;
+    cursor: pointer;
+}
