@@ -35,3 +35,8 @@ export type OperationFlag = {
     name: string
     status: 'loaded' | 'done'
 }
+
+export type InvestorWithStartups = {
+    investor: InvestorRecord
+    startups: Array<MatchedStartupRecord>
+}
