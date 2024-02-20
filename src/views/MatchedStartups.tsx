@@ -10,8 +10,9 @@ import {
 import './MatchedStartups.css'
 
 export const MatchedStartups: React.FC = () => {
-    const [matches, setMatches] =
-        React.useState<Array<InvestorWithStartups>>([])
+    const [matches, setMatches] = React.useState<Array<InvestorWithStartups>>(
+        [],
+    )
 
     React.useEffect(() => {
         const fetchData = async () => {
