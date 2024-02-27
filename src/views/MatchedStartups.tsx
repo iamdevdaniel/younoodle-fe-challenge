@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { AppContext } from '../App'
 import InvestorCard from '../components/InvestorCard'
 import useInfiniteScroll from '../hooks/useInfiniteScroll'
 import { getMatchedStartupsForInvestors } from '../services/pagination'
@@ -14,6 +15,7 @@ const ITEMS_PER_SCROLL = 12
 const STARTING_ID = 1
 
 export const MatchedStartups: React.FC = () => {
+    const context = React.useContext(AppContext)
     const [matches, setMatches] = React.useState<InvestorWithStartups[]>([])
     const [startId, setStartId] = React.useState(STARTING_ID)
 
@@ -33,12 +35,12 @@ export const MatchedStartups: React.FC = () => {
     const lastInvestorElementRef = useInfiniteScroll(fetchData, startId)
 
     React.useEffect(() => {
-        const timer = setTimeout(() => {
-            fetchData();
-        }, 1000);
-
-        return () => clearTimeout(timer);
-    }, []);
+        if (context.isAppInitialized) {
+            fetchData()
+        } else {
+            console.log('Not yet')
+        }
+    }, [context.isAppInitialized])
 
     return (
         <section id="matched-startups-view">

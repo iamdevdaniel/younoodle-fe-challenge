@@ -89,10 +89,7 @@ const classifyAndMatchStartupsWithInvestors = async () => {
     const matchedStartups: Map<IDBValidKey, MatchedStartup> = new Map()
     const [specificIndustryInvestors, anyIndustryInvestors] =
         await classifyInvestors()
-    const allInvestors = [
-        ...specificIndustryInvestors,
-        ...anyIndustryInvestors,
-    ]
+    const allInvestors = [...specificIndustryInvestors, ...anyIndustryInvestors]
 
     for (const investor of allInvestors) {
         await matchStartups(investor, matchedStartups)
@@ -104,28 +101,21 @@ const classifyAndMatchStartupsWithInvestors = async () => {
         matchedStartups,
     )
     if (isSuccessful) {
-        await setMatchedFlag(
-            CONSTS.DATABASE_NAME,
-            CONSTS.FLAGS_STORE_NAME,
-            { name: 'matchStartupsWithInvestors', status: 'done' },
-        )
+        await setMatchedFlag(CONSTS.DATABASE_NAME, CONSTS.FLAGS_STORE_NAME, {
+            name: 'matchStartupsWithInvestors',
+            status: 'done',
+        })
     }
 }
 
 export const matchStartupsWithInvestors = async () => {
-    const alreadyMatched = (await checkIfMatchedAlready(
+    const alreadyMatched = await checkIfMatchedAlready(
         CONSTS.DATABASE_NAME,
         CONSTS.FLAGS_STORE_NAME,
         'matchStartupsWithInvestors',
-    ))
-
-    console.log(alreadyMatched)
+    )
 
     if (!alreadyMatched) {
-
-        setTimeout(() => {
-            classifyAndMatchStartupsWithInvestors()
-        }, 3000)
-
+        classifyAndMatchStartupsWithInvestors()
     }
 }
