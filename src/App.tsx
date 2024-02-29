@@ -15,10 +15,12 @@ export const AppContext = React.createContext<AppContextType>({
 const initApp = async (
     setContext: React.Dispatch<React.SetStateAction<AppContextType>>,
 ) => {
-    await initializeStores()
-    await loadCsvFilesToDb()
-    await matchStartupsWithInvestors()
-    setContext(context => ({ ...context, isAppInitialized: true }))
+    initializeStores()
+        .then(loadCsvFilesToDb)
+        .then(matchStartupsWithInvestors)
+        .then(isInit => {
+            setContext(context => ({ ...context, isAppInitialized: isInit }))
+        })
 }
 
 function App() {
