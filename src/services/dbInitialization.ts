@@ -58,7 +58,7 @@ const loadCsvToStore = async <T>(
     if (!isCsvAlreadyLoaded) {
         const mapRow = (row: string[]): [undefined, T] => [
             undefined,
-            { name: row[0], industry: row[1] } as T,
+            { name: row[0].trim(), industry: row[1].trim() } as T,
         ]
 
         const storeData = async (value: T): Promise<void> => {

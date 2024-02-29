@@ -37,8 +37,6 @@ export const MatchedStartups: React.FC = () => {
     React.useEffect(() => {
         if (context.isAppInitialized) {
             fetchData()
-        } else {
-            console.log('Not yet')
         }
     }, [context.isAppInitialized])
 
