@@ -15,7 +15,7 @@ export const loadFromCsv = async <T>(
         }
         return true
     } catch (error) {
-        console.log('Error when reading from csv file: ', error)
+        console.error('Error when reading from csv file: ', error)
         return false
     }
 }

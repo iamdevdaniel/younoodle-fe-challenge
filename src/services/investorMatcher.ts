@@ -108,7 +108,7 @@ const classifyAndMatchStartupsWithInvestors = async () => {
     }
 }
 
-export const matchStartupsWithInvestors = async () => {
+export const matchStartupsWithInvestors = async (): Promise<boolean> => {
     const alreadyMatched = await checkIfMatchedAlready(
         CONSTS.DATABASE_NAME,
         CONSTS.FLAGS_STORE_NAME,
@@ -116,6 +116,8 @@ export const matchStartupsWithInvestors = async () => {
     )
 
     if (!alreadyMatched) {
-        classifyAndMatchStartupsWithInvestors()
+        await classifyAndMatchStartupsWithInvestors()
     }
+
+    return true
 }

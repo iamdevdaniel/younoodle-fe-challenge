@@ -15,9 +15,9 @@ const ITEMS_PER_SCROLL = 12
 const STARTING_ID = 1
 
 export const MatchedStartups: React.FC = () => {
-    const context = React.useContext(AppContext)
     const [matches, setMatches] = React.useState<InvestorWithStartups[]>([])
     const [startId, setStartId] = React.useState(STARTING_ID)
+    const { isAppInitialized } = React.useContext(AppContext)
 
     const fetchData = async () => {
         const result = await getMatchedStartupsForInvestors(
@@ -35,10 +35,12 @@ export const MatchedStartups: React.FC = () => {
     const lastInvestorElementRef = useInfiniteScroll(fetchData, startId)
 
     React.useEffect(() => {
-        if (context.isAppInitialized) {
+        if (isAppInitialized) {
             fetchData()
         }
-    }, [context.isAppInitialized])
+    }, [isAppInitialized])
+
+    const hasMatches = matches.length > 0
 
     return (
         <section id="matched-startups-view">
@@ -46,26 +48,36 @@ export const MatchedStartups: React.FC = () => {
                 <h1>Matched Startups</h1>
             </header>
             <ul id="investor-card-list">
-                {matches.map((item, index) => {
-                    const match: {
-                        investor: InvestorRecord
-                        startups: Array<MatchedStartupRecord>
-                    } = item
-                    const { investor, startups } = match
-                    const isLastElement = index === matches.length - 1
+                {hasMatches ? (
+                    matches.map((item, index) => {
+                        const match: {
+                            investor: InvestorRecord
+                            startups: Array<MatchedStartupRecord>
+                        } = item
+                        const { investor, startups } = match
+                        const isLastElement = index === matches.length - 1
 
-                    return (
-                        <li
-                            ref={isLastElement ? lastInvestorElementRef : null}
-                            key={index}
-                        >
-                            <InvestorCard
-                                investor={investor}
-                                startups={startups}
-                            />
-                        </li>
-                    )
-                })}
+                        console.log(match)
+
+                        return (
+                            <li
+                                ref={
+                                    isLastElement
+                                        ? lastInvestorElementRef
+                                        : null
+                                }
+                                key={index}
+                            >
+                                <InvestorCard
+                                    investor={investor}
+                                    startups={startups}
+                                />
+                            </li>
+                        )
+                    })
+                ) : (
+                    <React.Fragment />
+                )}
             </ul>
             <button name="add-matched-investor" aria-label="Add new investor">
                 +
